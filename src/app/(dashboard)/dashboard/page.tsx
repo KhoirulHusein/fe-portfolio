@@ -126,7 +126,10 @@ export default function DashboardPage() {
                   <div className="space-y-1 flex-1">
                     <p className="text-sm font-medium leading-none">{project.title}</p>
                     <p className="text-sm text-muted-foreground">
-                      {project.technologies.slice(0, 3).join(', ')}
+                      {Array.isArray(project.technologies) 
+                        ? project.technologies.slice(0, 3).join(', ') 
+                        : 'No technologies listed'
+                      }
                     </p>
                   </div>
                 </div>

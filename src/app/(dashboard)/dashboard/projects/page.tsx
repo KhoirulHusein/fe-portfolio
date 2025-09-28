@@ -117,11 +117,15 @@ export default function ProjectsPage() {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex flex-wrap gap-1">
-                    {project.technologies.map((tech) => (
-                      <Badge key={tech} variant="secondary">
-                        {tech}
-                      </Badge>
-                    ))}
+                    {Array.isArray(project.technologies) && project.technologies.length > 0 ? (
+                      project.technologies.map((tech) => (
+                        <Badge key={tech} variant="secondary">
+                          {tech}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-xs text-muted-foreground">No technologies listed</span>
+                    )}
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     <span>Created: {formatDate(project.createdAt)}</span>

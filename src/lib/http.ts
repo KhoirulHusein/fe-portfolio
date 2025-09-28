@@ -8,12 +8,22 @@ export const http = ky.create({
   credentials: 'include',
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
   hooks: {
     beforeRequest: [
       (request) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`🔄 ${request.method} ${request.url}`)
+        if (process.env.NODE_ENV !== 'production') {
+          // eslint-disable-next-line no-console
+          console.log('[HTTP]', request.method, String(request.url))
+        }
+      }
+    ],
+    afterResponse: [
+      (_request, _options, response) => {
+        if (process.env.NODE_ENV !== 'production') {
+          // eslint-disable-next-line no-console
+          console.log('[HTTP RES]', response.status, response.url)
         }
       }
     ],
@@ -24,7 +34,7 @@ export const http = ky.create({
           try {
             const errorBody = await response.json() as any
             error.message = errorBody?.message || errorBody?.error?.message || error.message
-          } catch (e) {
+          } catch {
             // Fallback if response is not JSON
           }
         }

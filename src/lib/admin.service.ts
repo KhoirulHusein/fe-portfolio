@@ -55,7 +55,16 @@ export const adminService = {
   async getExperiences(): Promise<Experience[]> {
     try {
       const response = await http.get(ADMIN.EXPERIENCES).json()
-      return normalizeResponse<Experience[]>(response)
+      const normalized = normalizeResponse<Experience[] | { items: Experience[] }>(response)
+      
+      // Handle both direct array and paginated response
+      if (Array.isArray(normalized)) {
+        return normalized
+      }
+      if (normalized && typeof normalized === 'object' && 'items' in normalized && Array.isArray(normalized.items)) {
+        return normalized.items
+      }
+      return []
     } catch (error: any) {
       const apiError = mapApiError(error)
       throw new Error(apiError.message)
