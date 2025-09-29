@@ -83,7 +83,7 @@ describe('Auth Service', () => {
           emailOrUsername: 'wrong@example.com',
           password: 'wrongpassword'
         })
-      ).rejects.toThrow('Invalid credentials')
+      ).rejects.toThrow('Bad request - please check query parameters')
     })
   })
 

@@ -1,5 +1,5 @@
-import { http } from '@/lib/http'
-import { unwrapPaginatedApiResponse, unwrapApiResponse } from '@/lib/api-unwrap'
+import { http, normalizeResponse, mapApiError } from '@/lib/http'
+import { unwrapArrayOrPaginated } from '@/lib/api-unwrap'
 import type { 
   Experience, 
   CreateExperienceInput, 
@@ -12,29 +12,30 @@ import type {
 
 export async function getAdminExperiences(params?: ExperienceSearchParams): Promise<Paginated<Experience>> {
   try {
-    const response = await http
+    const json = await http
       .get('api/v1/admin/experiences', { 
         searchParams: params as Record<string, string | number | boolean | undefined>
       })
-      .json() as any
+      .json<any>()
     
-    return unwrapPaginatedApiResponse<Experience>(response)
+    const data = normalizeResponse(json)
+    return unwrapArrayOrPaginated<Experience>(data)
   } catch (error: any) {
     console.error('[experiences.service] getAdminExperiences error:', error)
-    throw new Error(error.message || 'Failed to fetch experiences')
+    throw mapApiError(error)
   }
 }
 
 export async function getExperienceById(id: string): Promise<Experience> {
   try {
-    const response = await http
+    const json = await http
       .get(`api/v1/admin/experiences/${id}`)
-      .json() as ApiResponse<Experience>
+      .json<any>()
     
-    return unwrapApiResponse<Experience>(response)
+    return normalizeResponse<Experience>(json)
   } catch (error: any) {
     console.error('[experiences.service] getExperienceById error:', error)
-    throw new Error(error.message || 'Failed to fetch experience')
+    throw mapApiError(error)
   }
 }
 
@@ -53,30 +54,18 @@ export async function createExperience(payload: CreateExperienceInput): Promise<
       order: payload.order || 0
     }
 
-    const response = await http
+    const json = await http
       .post('api/v1/admin/experiences', {
         json: cleanedPayload
       })
-      .json() as ApiResponse<Experience>
+      .json<any>()
     
-    const result = unwrapApiResponse<Experience>(response)
+    const result = normalizeResponse<Experience>(json)
     console.log('[experiences.service] createExperience success:', result)
     return result
   } catch (error: any) {
     console.error('[experiences.service] createExperience error:', error)
-    
-    // Try to extract error message from response
-    let errorMessage = 'Failed to create experience'
-    if (error.response) {
-      try {
-        const errorResponse = await error.response.json()
-        errorMessage = errorResponse.message || errorMessage
-      } catch {
-        // If can't parse JSON, use default message
-      }
-    }
-    
-    throw new Error(errorMessage)
+    throw mapApiError(error)
   }
 }
 
@@ -92,87 +81,48 @@ export async function updateExperience(id: string, payload: Omit<UpdateExperienc
       summary: payload.summary === '' ? null : payload.summary,
     }
 
-    const response = await http
+    const json = await http
       .put(`api/v1/admin/experiences/${id}`, {
         json: cleanedPayload
       })
-      .json() as ApiResponse<Experience>
+      .json<any>()
     
-    const result = unwrapApiResponse<Experience>(response)
+    const result = normalizeResponse<Experience>(json)
     console.log('[experiences.service] updateExperience success:', result)
     return result
   } catch (error: any) {
     console.error('[experiences.service] updateExperience error:', error)
-    
-    // Try to extract error message from response
-    let errorMessage = 'Failed to update experience'
-    if (error.response) {
-      try {
-        const errorResponse = await error.response.json()
-        errorMessage = errorResponse.message || errorMessage
-      } catch {
-        // If can't parse JSON, use default message
-      }
-    }
-    
-    throw new Error(errorMessage)
+    throw mapApiError(error)
   }
 }
 
 export async function deleteExperience(id: string): Promise<void> {
   try {
-    const response = await http
+    const json = await http
       .delete(`api/v1/admin/experiences/${id}`)
-      .json() as ApiResponse<void>
+      .json<any>()
     
-    if (!response.success) {
-      throw new Error(response.message || 'Failed to delete experience')
-    }
-    
+    normalizeResponse(json)
     console.log('[experiences.service] deleteExperience success:', id)
   } catch (error: any) {
     console.error('[experiences.service] deleteExperience error:', error)
-    
-    // Try to extract error message from response
-    let errorMessage = 'Failed to delete experience'
-    if (error.response) {
-      try {
-        const errorResponse = await error.response.json()
-        errorMessage = errorResponse.message || errorMessage
-      } catch {
-        // If can't parse JSON, use default message
-      }
-    }
-    
-    throw new Error(errorMessage)
+    throw mapApiError(error)
   }
 }
 
 export async function publishExperience(id: string, published: boolean): Promise<Experience> {
   try {
-    const response = await http
+    const json = await http
       .patch(`api/v1/admin/experiences/${id}/publish`, {
         json: { published }
       })
-      .json() as ApiResponse<Experience>
+      .json<any>()
     
-    const result = unwrapApiResponse<Experience>(response)
+    const result = normalizeResponse<Experience>(json)
     console.log('[experiences.service] publishExperience success:', result)
     return result
   } catch (error: any) {
     console.error('[experiences.service] publishExperience error:', error)
-    
-    // Try to extract error message from response
-    let errorMessage = `Failed to ${published ? 'publish' : 'unpublish'} experience`
-    if (error.response) {
-      try {
-        const errorResponse = await error.response.json()
-        errorMessage = errorResponse.message || errorMessage
-      } catch {
-        // If can't parse JSON, use default message
-      }
-    }
-    
-    throw new Error(errorMessage)
+    throw mapApiError(error)
   }
 }

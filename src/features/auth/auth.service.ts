@@ -7,8 +7,7 @@ export const authService = {
     try {
       await http.post(AUTH.LOGIN, { json: payload })
     } catch (error: any) {
-      const apiError = mapApiError(error)
-      throw new Error(apiError.message)
+      throw mapApiError(error)
     }
   },
 
@@ -16,8 +15,7 @@ export const authService = {
     try {
       await http.post(AUTH.REGISTER, { json: payload })
     } catch (error: any) {
-      const apiError = mapApiError(error)
-      throw new Error(apiError.message)
+      throw mapApiError(error)
     }
   },
 
@@ -25,8 +23,7 @@ export const authService = {
     try {
       await http.post(AUTH.FORGOT, { json: payload })
     } catch (error: any) {
-      const apiError = mapApiError(error)
-      throw new Error(apiError.message)
+      throw mapApiError(error)
     }
   },
 
