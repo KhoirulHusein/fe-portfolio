@@ -40,15 +40,34 @@ export const PortfolioNavbar = () => {
     setIsOpen(false);
   };
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const handleMobileNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    handleClose();
+    setTimeout(() => {
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 300); // Wait for menu close animation
+  };
+
   return (
     <NavbarBase>
       {/* Desktop Navbar */}
       <NavBody>
         <Logo />
-        <NavItems items={navItems} />
+        <NavItems items={navItems} onItemClick={handleNavClick} />
         <div className="relative z-20 flex items-center gap-3">
           <ThemeToggle />
-          <NavbarButton href="/auth/login" variant="primary">
+          <NavbarButton href="/login" variant="primary">
             Login
           </NavbarButton>
         </div>
@@ -69,13 +88,13 @@ export const PortfolioNavbar = () => {
             <a
               key={`mobile-link-${idx}`}
               href={item.link}
-              onClick={handleClose}
+              onClick={(e) => handleMobileNavClick(e, item.link)}
               className="w-full text-left text-muted-foreground"
             >
               {item.name}
             </a>
           ))}
-          <NavbarButton href="/auth/login" variant="primary" className="w-full">
+          <NavbarButton href="/login" variant="primary" className="w-full">
             Login
           </NavbarButton>
         </MobileNavMenu>

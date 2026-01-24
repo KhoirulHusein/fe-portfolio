@@ -1,4 +1,4 @@
-import ExpandableCardDemo from "@/components/ui/expandable-card-demo-grid";
+import ExpandableCardDemo from "@/components/(showcase)/expandable-card-demo-grid";
 import { TextGenerateEffect, words } from "@/components/ui/text-generate-effect";
 
 export default function ProjectsSection() {

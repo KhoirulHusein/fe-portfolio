@@ -208,7 +208,6 @@ export const DottedGlowBackground = ({
     const draw = (now: number) => {
       if (stopped) return;
       const dt = (now - last) / 1000; // seconds
-      console.log(dt);
       last = now;
       const { width, height } = container.getBoundingClientRect();
 

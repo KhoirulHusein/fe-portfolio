@@ -4,7 +4,7 @@ import React, { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { useOutsideClick } from "@/hooks/use-outside-click";
-import { LinkPreview } from "./link-preview";
+import { LinkPreview } from "../ui/link-preview";
 import Image from "next/image";
 import { projectCards } from "@/config/projects.config";
 
