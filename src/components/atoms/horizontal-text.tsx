@@ -12,7 +12,11 @@ if (typeof window !== "undefined") {
 }
 
 interface HorizontalTextProps {
-  text: string;
+  text?: string;
+  segments?: Array<{
+    type: 'text' | 'component';
+    content: string | React.ReactNode;
+  }>;
   className?: string;
   letterClassName?: string;
   speed?: number;
@@ -21,6 +25,7 @@ interface HorizontalTextProps {
 
 export const HorizontalText = ({
   text,
+  segments,
   className,
   letterClassName,
   speed = 1,
@@ -29,6 +34,11 @@ export const HorizontalText = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const lettersRef = useRef<(HTMLSpanElement | null)[]>([]);
+  
+  // Build full text from segments for animation calculation
+  const fullText = segments 
+    ? segments.map(seg => seg.type === 'text' ? seg.content : 'XXXXX').join('')
+    : text || '';
 
   useGSAP(
     () => {
@@ -119,11 +129,78 @@ export const HorizontalText = ({
         );
       });
     },
-    { scope: containerRef, dependencies: [text, speed, visibleLetters] }
+    { scope: containerRef, dependencies: [fullText, speed, visibleLetters] }
   );
 
-  // Split text into letters
-  const letters = text.split("");
+  // Split text into letters or render segments
+  const renderContent = () => {
+    if (segments) {
+      let letterIndex = 0;
+      return segments.map((segment, segIndex) => {
+        if (segment.type === 'component') {
+          const componentIndex = letterIndex;
+          letterIndex += 5; // Reserve space for component
+          return (
+            <span
+              key={`component-${segIndex}`}
+              ref={(el) => {
+                lettersRef.current[componentIndex] = el;
+              }}
+              className={cn(
+                "inline-block font-bold leading-none tracking-tighter",
+                "text-[24vw] sm:text-[20vw] md:text-[16vw] lg:text-[14vw]",
+                "text-foreground",
+                letterClassName
+              )}
+            >
+              {segment.content}
+            </span>
+          );
+        } else {
+          const letters = (segment.content as string).split('');
+          return letters.map((letter, i) => {
+            const currentIndex = letterIndex++;
+            return (
+              <span
+                key={`${letter}-${segIndex}-${i}`}
+                ref={(el) => {
+                  lettersRef.current[currentIndex] = el;
+                }}
+                className={cn(
+                  "inline-block font-bold leading-none tracking-tighter",
+                  "text-[24vw] sm:text-[20vw] md:text-[16vw] lg:text-[14vw]",
+                  "text-foreground",
+                  letter === " " && "w-[0.3em]",
+                  letterClassName
+                )}
+              >
+                {letter === " " ? "\u00A0" : letter}
+              </span>
+            );
+          });
+        }
+      });
+    } else {
+      const letters = fullText.split("");
+      return letters.map((letter, index) => (
+        <span
+          key={`${letter}-${index}`}
+          ref={(el) => {
+            lettersRef.current[index] = el;
+          }}
+          className={cn(
+            "inline-block font-bold leading-none tracking-tighter",
+            "text-[24vw] sm:text-[20vw] md:text-[16vw] lg:text-[14vw]",
+            "text-foreground",
+            letter === " " && "w-[0.3em]",
+            letterClassName
+          )}
+        >
+          {letter === " " ? "\u00A0" : letter}
+        </span>
+      ));
+    }
+  };
 
   return (
     <div
@@ -135,25 +212,9 @@ export const HorizontalText = ({
     >
       <div
         ref={textRef}
-        className="absolute left-1/4 top-1/2 flex -translate-y-1/2 whitespace-nowrap md:left-1/5 md:translate-x-0"
+        className="absolute left-1/12 top-1/2 flex -translate-y-1/2 whitespace-nowrap md:left-1/4 md:translate-x-0"
       >
-        {letters.map((letter, index) => (
-          <span
-            key={`${letter}-${index}`}
-            ref={(el) => {
-              lettersRef.current[index] = el;
-            }}
-            className={cn(
-              "inline-block font-bold leading-none tracking-tighter",
-              "text-[24vw] sm:text-[20vw] md:text-[16vw] lg:text-[14vw]",
-              "text-foreground",
-              letter === " " && "w-[0.3em]",
-              letterClassName
-            )}
-          >
-            {letter === " " ? "\u00A0" : letter}
-          </span>
-        ))}
+        {renderContent()}
       </div>
     </div>
   );

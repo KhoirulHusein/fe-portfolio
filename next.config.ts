@@ -7,6 +7,17 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.geaves.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.aceternity.com',
+      },
+    ],
+    domains: [
+      "api.microlink.io", // Microlink Image Preview
     ],
   },
 };
