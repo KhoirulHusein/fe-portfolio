@@ -126,15 +126,15 @@ export const projectCards: ProjectCard[] = [
   },
   {
     id: "todo-list-app",
-    description: "Lorem ipsum",
-    title: "Lorem ipsum dolor sit amet",
+    description: "Coming Soon...",
+    title: "Coming Soon...",
     src: "https://www.geaves.com/media/catalog/product/cache/43ceea50484a8b0adcb18d996a748113/3/1/31552_5.webp",
     ctaText: "Visit",
     ctaLink: "https://ui.aceternity.com/templates",
     content: () => {
       return (
         <p>
-          Lorem ipsum dor sit
+          Coming Soon...
         </p>
       );
     },

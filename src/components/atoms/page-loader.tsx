@@ -1,18 +1,42 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { AudioManager } from "@/lib/audio-manager";
 
-export function PageLoader() {
+interface PageLoaderProps {
+  onAudioChoice?: (withAudio: boolean) => void;
+}
+
+export function PageLoader({ onAudioChoice }: PageLoaderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isRevealing, setIsRevealing] = useState(false);
+  const [showEntryGate, setShowEntryGate] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const handleEnterWithAudio = () => {
+    AudioManager.fadeIn();
+    onAudioChoice?.(true);
+    triggerReveal();
+  };
+
+  const handleEnterSilently = () => {
+    onAudioChoice?.(false);
+    triggerReveal();
+  };
+
+  const triggerReveal = () => {
+    window.scrollTo(0, 0);
+    setIsRevealing(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      document.body.style.overflow = "";
+    }, 1200);
+  };
+
   useEffect(() => {
-    // Lock scroll during loading
     document.body.style.overflow = "hidden";
     
-    // Simulate progress
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -27,16 +51,10 @@ export function PageLoader() {
       clearInterval(progressInterval);
       setProgress(100);
       
+      // Show entry gate after loading complete
       setTimeout(() => {
-        // Reset scroll to top before reveal
-        window.scrollTo(0, 0);
-        setIsRevealing(true);
-        setTimeout(() => {
-          setIsLoading(false);
-          // Unlock scroll after loading complete
-          document.body.style.overflow = "";
-        }, 1200);
-      }, 400);
+        setShowEntryGate(true);
+      }, 500);
     };
 
     if (document.readyState === "complete") {
@@ -60,7 +78,7 @@ export function PageLoader() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {/* Main background curtain - simple slide up */}
+          {/* Main background curtain */}
           <motion.div
             className="absolute inset-0 bg-background"
             initial={{ y: 0 }}
@@ -71,9 +89,9 @@ export function PageLoader() {
             }}
           />
 
-          {/* Loading content - fades out before reveal */}
-          <AnimatePresence>
-            {!isRevealing && (
+          {/* Loading content */}
+          <AnimatePresence mode="wait">
+            {!isRevealing && !showEntryGate && (
               <motion.div
                 className="relative z-10 flex flex-col items-center gap-8"
                 initial={{ opacity: 1 }}
@@ -368,9 +386,172 @@ export function PageLoader() {
                 ))}
               </motion.div>
             )}
+
+            {/* Entry Gate - Audio Choice */}
+            {!isRevealing && showEntryGate && (
+              <motion.div
+                key="entry-gate"
+                className="relative z-10 flex flex-col items-center gap-8"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: -30 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                {/* Animated sound waves decoration */}
+                <div className="relative w-20 h-20">
+                  {[...Array(3)].map((_, i) => (
+                    <motion.div
+                      key={`wave-${i}`}
+                      className="absolute inset-0 rounded-full border-2 border-primary/30"
+                      animate={{
+                        scale: [1, 1.5 + i * 0.3, 1],
+                        opacity: [0.6, 0, 0.6],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: i * 0.4,
+                        ease: "easeOut",
+                      }}
+                    />
+                  ))}
+                  <motion.div
+                    className="absolute inset-0 flex items-center justify-center"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <svg viewBox="0 0 24 24" className="w-10 h-10 text-primary" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 18V5l12-2v13" />
+                      <circle cx="6" cy="18" r="3" />
+                      <circle cx="18" cy="16" r="3" />
+                    </svg>
+                  </motion.div>
+                </div>
+
+                {/* Title */}
+                <div className="text-center space-y-2">
+                  <motion.h2 
+                    className="text-2xl font-bold text-foreground"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    Experience with Sound?
+                  </motion.h2>
+                  <motion.p 
+                    className="text-sm text-muted-foreground max-w-xs"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    This portfolio has ambient music for a better experience
+                  </motion.p>
+                </div>
+
+                {/* Buttons */}
+                <motion.div 
+                  className="flex flex-col sm:flex-row gap-3"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <motion.button
+                    onClick={handleEnterWithAudio}
+                    className="px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium text-sm flex items-center gap-2 hover:opacity-90 transition-opacity"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                    </svg>
+                    Enter with Audio
+                  </motion.button>
+                  <motion.button
+                    onClick={handleEnterSilently}
+                    className="px-6 py-3 rounded-full border border-border text-foreground font-medium text-sm flex items-center gap-2 hover:bg-muted transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                      <line x1="22" y1="9" x2="16" y2="15" />
+                      <line x1="16" y1="9" x2="22" y2="15" />
+                    </svg>
+                    Enter Silently
+                  </motion.button>
+                </motion.div>
+
+                {/* Floating particles */}
+                {[...Array(12)].map((_, i) => (
+                  <motion.div
+                    key={`particle-gate-${i}`}
+                    className="absolute w-1 h-1 rounded-full bg-primary/30"
+                    style={{
+                      left: `${10 + (i * 7)}%`,
+                      top: `${20 + (i % 3) * 25}%`,
+                    }}
+                    animate={{
+                      y: [0, -30, 0],
+                      opacity: [0, 0.5, 0],
+                      scale: [0, 1, 0],
+                    }}
+                    transition={{
+                      duration: 2 + (i % 3),
+                      repeat: Infinity,
+                      delay: i * 0.2,
+                      ease: "easeInOut",
+                    }}
+                  />
+                ))}
+              </motion.div>
+            )}
           </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>
   );
+}
+
+// Export audio controller hook for use in other components
+export function useAudioController() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const initAudio = useCallback((startPlaying: boolean) => {
+    if (typeof window === "undefined") return;
+    
+    if (!audioRef.current) {
+      audioRef.current = new Audio("/dancing-queen.mp3");
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.3;
+    }
+    
+    if (startPlaying) {
+      setIsPlaying(true);
+    }
+  }, []);
+
+  const toggle = useCallback(() => {
+    if (!audioRef.current) return;
+    
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play().catch(console.error);
+      setIsPlaying(true);
+    }
+  }, [isPlaying]);
+
+  const toggleMute = useCallback(() => {
+    if (!audioRef.current) return;
+    
+    audioRef.current.muted = !audioRef.current.muted;
+    setIsMuted(!isMuted);
+  }, [isMuted]);
+
+  return { isPlaying, isMuted, toggle, toggleMute, initAudio };
 }

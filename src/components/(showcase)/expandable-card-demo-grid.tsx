@@ -7,6 +7,7 @@ import { useOutsideClick } from "@/hooks/use-outside-click";
 import { LinkPreview } from "../ui/link-preview";
 import Image from "next/image";
 import { projectCards } from "@/config/projects.config";
+import { SparklesIcon, type SparklesIconHandle } from "../ui/sparkles";
 
 export default function ExpandableCardDemo() {
   const [active, setActive] = useState<(typeof projectCards)[number] | boolean | null>(
@@ -14,6 +15,48 @@ export default function ExpandableCardDemo() {
   );
   const id = useId();
   const ref = useRef<HTMLDivElement>(null!);
+  
+  // Custom cursor state
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isHoveringCard, setIsHoveringCard] = useState(false);
+  const sparklesRef = useRef<SparklesIconHandle>(null);
+  const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLUListElement>(null);
+
+  // Handle mouse move for custom cursor
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+    };
+
+    if (isHoveringCard) {
+      window.addEventListener('mousemove', handleMouseMove);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isHoveringCard]);
+
+  // Start sparkles animation every 3 seconds
+  useEffect(() => {
+    if (isHoveringCard && sparklesRef.current) {
+      // Start initial animation
+      sparklesRef.current.startAnimation();
+      
+      // Set up interval for every 3 seconds
+      animationIntervalRef.current = setInterval(() => {
+        sparklesRef.current?.startAnimation();
+      }, 3000);
+    }
+
+    return () => {
+      if (animationIntervalRef.current) {
+        clearInterval(animationIntervalRef.current);
+        animationIntervalRef.current = null;
+      }
+    };
+  }, [isHoveringCard]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -141,16 +184,59 @@ export default function ExpandableCardDemo() {
     </>
   );
 
+  const customCursor = (
+    <AnimatePresence>
+      {isHoveringCard && (
+        <motion.div
+          initial={{ opacity: 0, scale: 1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          className="fixed pointer-events-none z-100 flex flex-col items-center gap-2"
+          style={{
+            left: cursorPosition.x,
+            top: cursorPosition.y,
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <motion.div
+            animate={{
+              rotate: [0, 10, -10, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <SparklesIcon ref={sparklesRef} size={32} className="text-primary" />
+          </motion.div>
+          <span className="text-xs font-bold text-primary dark:text-white whitespace-nowrap tracking-wide">
+            VIEW PROJECT
+          </span>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <>
       {typeof window !== 'undefined' && createPortal(modalContent, document.body)}
-      <ul className="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-start gap-4">
+      {typeof window !== 'undefined' && createPortal(customCursor, document.body)}
+
+      <ul 
+        ref={containerRef}
+        className="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-start gap-4"
+      >
         {projectCards.map((card) => (
           <motion.div
             layoutId={`card-${card.title}-${id}`}
             key={card.id}
             onClick={() => setActive(card)}
-            className="p-4 flex flex-col  hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
+            onMouseEnter={() => setIsHoveringCard(true)}
+            onMouseLeave={() => setIsHoveringCard(false)}
+            style={{ cursor: isHoveringCard ? 'none' : 'pointer' }}
+            className="p-4 flex flex-col hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl"
           >
             <div className="flex gap-4 flex-col  w-full">
               <motion.div layoutId={`image-${card.title}-${id}`}>
