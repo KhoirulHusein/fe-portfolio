@@ -2,8 +2,9 @@ import { NavbarWrapper } from "@/components/organisms/navbar-wrapper"
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Start - Khoirul Husein | Portfolio",
-  description: "Explore my portfolio showcasing projects, skills, and experience",
+  title: "Khoirul Husein — Frontend Developer",
+  description:
+    "Portfolio of Khoirul Husein, a frontend developer based in Bekasi, Indonesia. Specializing in enterprise dashboard systems, React, Next.js, and TypeScript.",
 };
 
 export default function PublicLayout({

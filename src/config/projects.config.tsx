@@ -10,10 +10,36 @@ export interface ProjectCard {
 
 export const projectCards: ProjectCard[] = [
   {
+    id: "upconnect",
+    description: "Universitas Pancasila",
+    title: "Upconnect — Alumni Network",
+    src: "/actionItem/upconnect/landingpage.png",
+    ctaText: "Visit",
+    ctaLink: "https://upconnect.univpancasila.ac.id",
+    content: () => {
+      return (
+        <>
+          <p>
+            Upconnect is the official alumni network platform for Universitas Pancasila, built to bridge
+            the gap between graduates, current students, and the institution. I led the full frontend
+            architecture — from design system setup to feature delivery — using React Router v7,
+            TypeScript, Tailwind CSS v4, and shadcn/ui.
+          </p>
+          <p>
+            The platform handles alumni directory, event management, and institutional announcements
+            with a focus on scalability and performance. Backend integration is powered by Prisma and
+            PostgreSQL, containerized with Docker. Every layer of the stack — from database schema to
+            UI component — was owned and shipped by me.
+          </p>
+        </>
+      );
+    },
+  },
+  {
     id: "siami-project",
     description: "Universitas Pancasila",
     title: "SIAMI (Audit Management System)",
-    src: "https://www.geaves.com/media/catalog/product/cache/43ceea50484a8b0adcb18d996a748113/3/1/31552_5.webp",
+    src: "/actionItem/siami/siami-dashboard.png",
     ctaText: "Visit",
     ctaLink: "https://siami.univpancasila.ac.id/dashboard/login",
     content: () => {
@@ -38,7 +64,7 @@ export const projectCards: ProjectCard[] = [
     id: "save-our-species",
     description: "Dicoding Capstone Project",
     title: "Save Our Species",
-    src: "https://www.geaves.com/media/catalog/product/cache/43ceea50484a8b0adcb18d996a748113/3/1/31552_5.webp",
+    src: "/actionItem/save-our-species/landing.png",
     ctaText: "Visit",
     ctaLink: "https://ui.aceternity.com/templates",
     content: () => {
@@ -63,7 +89,7 @@ export const projectCards: ProjectCard[] = [
     id: "restaurant-catalog",
     description: "Dicoding Frontend Expert",
     title: "Restaurant Catalog Website",
-    src: "https://www.geaves.com/media/catalog/product/cache/43ceea50484a8b0adcb18d996a748113/3/1/31552_5.webp",
+    src: "/actionItem/restaurant-catalog/landing.png",
     ctaText: "Visit",
     ctaLink: "https://ui.aceternity.com/templates",
     content: () => {
@@ -88,7 +114,7 @@ export const projectCards: ProjectCard[] = [
     id: "hostle-website",
     description: "Dicoding Frontend Developer",
     title: "Hostle Website",
-    src: "https://www.geaves.com/media/catalog/product/cache/43ceea50484a8b0adcb18d996a748113/3/1/31552_5.webp",
+    src: "/actionItem/hostle/landing.png",
     ctaText: "Visit",
     ctaLink: "https://hostle.vercel.app/",
     content: () => {
@@ -105,37 +131,6 @@ export const projectCards: ProjectCard[] = [
             a more fluid browsing experience.
           </p>
         </>
-      );
-    },
-  },
-  {
-    id: "bookshelf-apps",
-    description: "Dicoding Intermediate Frontend",
-    title: "Book Tracking Platform",
-    src: "https://www.geaves.com/media/catalog/product/cache/43ceea50484a8b0adcb18d996a748113/3/1/31552_5.webp",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p>
-          BookshelfApps is a personal project designed to help you track your reading journey. Built with Web Storage technology by utilizing localStorage, it offers usage where you don&apos;t have to worry that when you refresh your notes will disappear. Visit BookshelfApps at BookshelfApps.
-
-        </p>
-      );
-    },
-  },
-  {
-    id: "todo-list-app",
-    description: "Coming Soon...",
-    title: "Coming Soon...",
-    src: "https://www.geaves.com/media/catalog/product/cache/43ceea50484a8b0adcb18d996a748113/3/1/31552_5.webp",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p>
-          Coming Soon...
-        </p>
       );
     },
   },

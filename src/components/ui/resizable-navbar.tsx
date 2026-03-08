@@ -124,23 +124,57 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         className,
       )}
     >
-      {items.map((item, idx) => (
-        <a
-          onMouseEnter={() => setHovered(idx)}
-          onClick={(e) => onItemClick?.(e, item.link)}
-          className="relative px-4 py-2 text-muted-foreground"
-          key={`link-${idx}`}
-          href={item.link}
-        >
-          {hovered === idx && (
-            <motion.div
-              layoutId="hovered"
-              className="absolute inset-0 h-full w-full rounded-full bg-muted"
-            />
-          )}
-          <span className="relative z-20">{item.name}</span>
-        </a>
-      ))}
+      {items.map((item, idx) => {
+        const isHovered = hovered === idx;
+        return (
+          <a
+            onMouseEnter={() => setHovered(idx)}
+            onClick={(e) => onItemClick?.(e, item.link)}
+            className="relative px-4 py-2 text-muted-foreground"
+            key={`link-${idx}`}
+            href={item.link}
+          >
+            {isHovered && (
+              <motion.div
+                layoutId="hovered"
+                className="absolute inset-0 h-full w-full rounded-full bg-muted"
+              />
+            )}
+
+            {/* Text flip — CSS transitions driven by React state */}
+            <span
+              className="relative z-20 block"
+              style={{ overflow: "hidden", height: "1.1em", lineHeight: "1.1em" }}
+            >
+              {/* Front — slides up on hover */}
+              <span
+                style={{
+                  display: "block",
+                  transform: isHovered ? "translateY(-100%)" : "translateY(0%)",
+                  transition: "transform 0.28s cubic-bezier(0.645, 0.045, 0.355, 1)",
+                }}
+              >
+                {item.name}
+              </span>
+              {/* Back — enters from below on hover */}
+              <span
+                style={{
+                  display: "block",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  transform: isHovered ? "translateY(0%)" : "translateY(100%)",
+                  transition: "transform 0.28s cubic-bezier(0.645, 0.045, 0.355, 1)",
+                  color: "hsl(var(--foreground))",
+                }}
+              >
+                {item.name}
+              </span>
+            </span>
+          </a>
+        );
+      })}
     </motion.div>
   );
 };
@@ -156,7 +190,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         width: visible ? "90%" : "100%",
         paddingRight: visible ? "12px" : "0px",
         paddingLeft: visible ? "12px" : "0px",
-        borderRadius: visible ? "4px" : "2rem",
+        borderRadius: visible ? "2rem" : "2rem",
         y: visible ? 20 : 0,
       }}
       transition={{
@@ -205,7 +239,7 @@ export const MobileNavMenu = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-card px-4 py-8 shadow-[0_0_24px_rgba(34,42,53,0.06),0_1px_1px_rgba(0,0,0,0.05),0_0_0_1px_rgba(34,42,53,0.04),0_0_4px_rgba(34,42,53,0.08),0_16px_68px_rgba(47,48,55,0.05),0_1px_0_rgba(255,255,255,0.1)_inset] dark:bg-card",
+            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-2xl bg-card px-4 py-8 shadow-[0_0_24px_rgba(34,42,53,0.06),0_1px_1px_rgba(0,0,0,0.05),0_0_0_1px_rgba(34,42,53,0.04),0_0_4px_rgba(34,42,53,0.08),0_16px_68px_rgba(47,48,55,0.05),0_1px_0_rgba(255,255,255,0.1)_inset] dark:bg-card",
             className,
           )}
         >
@@ -276,13 +310,15 @@ export const NavbarButton = ({
       "bg-gradient-to-b from-primary to-primary/80 text-primary-foreground shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]",
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Comp = Tag as any;
   return (
-    <Tag
+    <Comp
       href={href || undefined}
       className={cn(baseStyles, variantStyles[variant], className)}
       {...props}
     >
       {children}
-    </Tag>
+    </Comp>
   );
 };

@@ -1,9 +1,6 @@
 "use client";
-import {
-  useScroll,
-  useTransform,
-  motion,
-} from "motion/react";
+
+import { useScroll, useTransform, motion } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
 
 interface TimelineEntry {
@@ -19,8 +16,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
 
   useEffect(() => {
     if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      setHeight(rect.height);
+      setHeight(ref.current.getBoundingClientRect().height);
     }
   }, [ref, data]);
 
@@ -33,55 +29,54 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   return (
-    <div
-      className="w-full  font-sans md:px-10"
-      ref={containerRef}
-    >
-      <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
-        <h2 className="text-lg md:text-4xl mb-4 text-black dark:text-white max-w-4xl">
-          I&apos;m Khoirul Husein
-        </h2>
-        <p className="text-neutral-700 dark:text-neutral-300 text-sm md:text-base max-w-sm">
-          I&apos;ve been working on pancasila university for the past 1 years. Here&apos;s
-          a timeline of my journey.
-        </p>
-      </div>
-
-      <div ref={ref} className="relative max-w-7xl mx-auto pb-20">
+    <div ref={containerRef} className="w-full">
+      <div ref={ref} className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16 pb-24">
         {data.map((item, index) => (
-          <div
+          <motion.div
             key={item.id || `timeline-${index}`}
-            className="flex justify-start pt-10 md:pt-40 md:gap-10"
+            className="flex justify-start pt-12 md:pt-32 md:gap-12"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7, ease: [0.215, 0.61, 0.355, 1], delay: index * 0.06 }}
           >
-            <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
-              <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-white dark:bg-black flex items-center justify-center">
-                <div className="h-4 w-4 rounded-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 p-2" />
+            {/* Sticky date label */}
+            <div className="sticky top-40 self-start flex flex-col md:flex-row z-40 items-start max-w-xs lg:max-w-sm md:w-full">
+              {/* Dot */}
+              <div className="absolute left-[-1px] md:left-3 top-1 h-3 w-3 flex items-center justify-center">
+                <div className="h-2 w-2 rotate-45 bg-foreground" />
               </div>
-              <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-neutral-500 dark:text-neutral-500 ">
+
+              {/* Period label */}
+              <h3
+                className="hidden md:block text-sm md:pl-12 font-medium text-muted-foreground leading-snug"
+                style={{ fontFamily: "var(--font-instrument-sans)" }}
+              >
                 {item.title}
               </h3>
             </div>
 
-            <div className="relative pl-20 pr-4 md:pl-4 w-full">
-              <h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-neutral-500 dark:text-neutral-500">
+            {/* Content */}
+            <div className="relative pl-8 md:pl-4 w-full">
+              <h3
+                className="md:hidden block text-sm mb-4 font-medium text-muted-foreground"
+                style={{ fontFamily: "var(--font-instrument-sans)" }}
+              >
                 {item.title}
               </h3>
-              {item.content}{" "}
+              {item.content}
             </div>
-          </div>
+          </motion.div>
         ))}
+
+        {/* Animated vertical line */}
         <div
-          style={{
-            height: height + "px",
-          }}
-          className="absolute md:left-8 left-8 top-0 overflow-hidden w-0.5 bg-[linear-gradient(to_bottom,var(--tw-gradient-stops))] from-transparent from-0% via-neutral-200 dark:via-neutral-700 to-transparent to-99%  mask-[linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)] "
+          style={{ height: `${height}px` }}
+          className="absolute left-[23px] md:left-[39px] top-0 overflow-hidden w-px bg-border [mask-image:linear-gradient(to_bottom,transparent_0%,black_8%,black_92%,transparent_100%)]"
         >
           <motion.div
-            style={{
-              height: heightTransform,
-              opacity: opacityTransform,
-            }}
-            className="absolute inset-x-0 top-0  w-0.5 bg-linear-to-t from-accent via-secondary to-transparent from-0% via-10% rounded-full"
+            style={{ height: heightTransform, opacity: opacityTransform }}
+            className="absolute inset-x-0 top-0 w-px bg-foreground rounded-full"
           />
         </div>
       </div>
