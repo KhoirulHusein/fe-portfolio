@@ -1,50 +1,127 @@
-import { DottedGlowBackground } from "@/components/ui/dotted-glow-background";
-import { LinkPreview } from "@/components/ui/link-preview";
+"use client";
+
+import { motion } from "motion/react";
+import { Diamond } from "@/components/atoms/diamond";
+import { CharReveal } from "@/components/atoms/char-reveal";
+import { SectionDivider } from "@/components/atoms/section-divider";
+import { SectionSlide } from "@/components/atoms/section-slide";
+
+type BezierCurve = [number, number, number, number];
+const ease: BezierCurve = [0.215, 0.61, 0.355, 1];
+
+const clipReveal = (delay = 0) => ({
+  initial: { clipPath: "inset(0 100% 0 0)" },
+  whileInView: { clipPath: "inset(0 0% 0 0)" },
+  viewport: { once: true, margin: "-60px" },
+  transition: { duration: 0.55, ease, delay },
+});
+
+const links = [
+  { label: "irul.career@gmail.com",         href: "mailto:irul.career@gmail.com" },
+  { label: "github.com/KhoirulHusein",       href: "https://github.com/KhoirulHusein",            external: true },
+  { label: "linkedin.com/in/khoirul-husein", href: "https://www.linkedin.com/in/khoirul-husein/", external: true },
+];
 
 export default function ContactSection() {
   return (
-    <section id="contact" className="h-fit! pb-20">
-      <div className="relative mx-auto flex w-full max-w-7xl items-center justify-center">
-        <DottedGlowBackground
-          className="pointer-events-none mask-radial-to-90% mask-radial-at-center opacity-20 dark:opacity-100"
-          opacity={1}
-          gap={10}
-          radius={1.6}
-          colorLightVar="--color-neutral-500"
-          glowColorLightVar="--color-neutral-600"
-          colorDarkVar="--color-neutral-500"
-          glowColorDarkVar="--color-sky-800"
-          backgroundOpacity={0}
-          speedMin={0.3}
-          speedMax={1.6}
-          speedScale={1}
-        />
+    <section id="contact" className="relative py-24">
+      <SectionSlide>
+        {/* Entry divider — accent sweep marks the section boundary */}
+        <SectionDivider className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 mb-12" />
 
-        <div className="relative z-10 flex w-full flex-col items-center justify-between space-y-6 px-8 py-16 text-left md:flex-row md:space-y-0">
-          <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-              Let&apos;s Work Together
-            </h2>
-            <p className="text-lg text-left text-muted-foreground">
-              I&apos;m always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Feel free to reach out!
+        <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
+
+          {/* Label */}
+          <motion.div className="flex items-center gap-2 mb-12" {...clipReveal(0.1)}>
+            <Diamond size={8} className="text-muted-foreground" />
+            <span
+              className="text-xs tracking-widest uppercase text-muted-foreground"
+              style={{ fontFamily: "var(--font-instrument-sans)" }}
+            >
+              Contact
+            </span>
+          </motion.div>
+
+          {/* Heading */}
+          <h2
+            className="text-4xl md:text-6xl lg:text-7xl font-black leading-[0.92] tracking-[-0.04em] text-foreground mb-16"
+            style={{ fontFamily: "var(--font-fraunces)" }}
+            aria-label="Let's build something together."
+          >
+            <div className="overflow-hidden">
+              <CharReveal text="Let's build" trigger="viewport" delay={80}  stagger={0.04} duration={0.75} />
+            </div>
+            <div className="overflow-hidden">
+              <CharReveal text="something"  trigger="viewport" delay={260} stagger={0.04} duration={0.75} />
+            </div>
+            <div className="overflow-hidden">
+              <CharReveal text="together."  trigger="viewport" delay={430} stagger={0.04} duration={0.75} />
+            </div>
+          </h2>
+
+          {/* Mid separator */}
+          <SectionDivider className="mb-12" delay={0.3} />
+
+          {/* Bottom row */}
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-10">
+
+            {/* Location */}
+            <div>
+              <p
+                className="text-4xl md:text-5xl font-black leading-tight tracking-[-0.04em] text-muted-foreground/40"
+                style={{ fontFamily: "var(--font-fraunces)" }}
+              >
+                Bekasi
+              </p>
+              <div className="flex items-center gap-3 mt-1">
+                <Diamond size={8} className="text-muted-foreground/40" />
+                <p
+                  className="text-4xl md:text-5xl font-black leading-tight tracking-[-0.04em] text-muted-foreground/40"
+                  style={{ fontFamily: "var(--font-fraunces)" }}
+                >
+                  Indonesia
+                </p>
+              </div>
+            </div>
+
+            {/* Links — stagger from right */}
+            <div className="flex flex-col gap-3" style={{ fontFamily: "var(--font-instrument-sans)" }}>
+              {links.map((link, i) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, ease, delay: 0.15 + i * 0.1 }}
+                >
+                  <span className="w-0 overflow-hidden group-hover:w-3 transition-all duration-300 text-accent">→</span>
+                  {link.label}
+                </motion.a>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-16 pt-8 border-t border-border flex items-center justify-between">
+            <p
+              className="text-xs text-muted-foreground tracking-wide"
+              style={{ fontFamily: "var(--font-instrument-sans)" }}
+            >
+              © {new Date().getFullYear()} Khoirul Husein
+            </p>
+            <p
+              className="text-xs text-muted-foreground tracking-widest uppercase"
+              style={{ fontFamily: "var(--font-instrument-sans)" }}
+            >
+              Open to offers
             </p>
           </div>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <a
-              href="mailto:irul.career@gmail.com"
-              className="inline-flex items-center justify-center rounded-4xl bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md"
-            >
-              Get In Touch
-            </a>
-            <LinkPreview
-              url="https://github.com/KhoirulHusein"
-              className="inline-flex items-center justify-center rounded-4xl border border-border bg-card px-8 py-3 text-sm font-medium text-card-foreground shadow-sm transition-all duration-200 hover:bg-muted hover:shadow-md"
-            >
-              View GitHub
-            </LinkPreview>
-          </div>
         </div>
-      </div>
+      </SectionSlide>
     </section>
   );
 }

@@ -9,7 +9,6 @@ import {
   MobileNavHeader,
   MobileNavMenu,
   MobileNavToggle,
-  NavbarButton,
 } from "@/components/ui/resizable-navbar";
 import { Logo } from "@/components/atoms/logo";
 import { ThemeToggle } from "@/components/atoms/theme-toggle";
@@ -67,9 +66,6 @@ export const PortfolioNavbar = () => {
         <NavItems items={navItems} onItemClick={handleNavClick} />
         <div className="relative z-20 flex items-center gap-3">
           <ThemeToggle />
-          <NavbarButton href="/login" variant="primary">
-            Login
-          </NavbarButton>
         </div>
       </NavBody>
 
@@ -89,14 +85,12 @@ export const PortfolioNavbar = () => {
               key={`mobile-link-${idx}`}
               href={item.link}
               onClick={(e) => handleMobileNavClick(e, item.link)}
-              className="w-full text-left text-muted-foreground"
+              className="w-full text-left text-muted-foreground tracking-widest uppercase text-xs"
+              style={{ fontFamily: "var(--font-instrument-sans)" }}
             >
               {item.name}
             </a>
           ))}
-          <NavbarButton href="/login" variant="primary" className="w-full">
-            Login
-          </NavbarButton>
         </MobileNavMenu>
       </MobileNav>
     </NavbarBase>

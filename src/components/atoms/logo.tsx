@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Diamond } from "@/components/atoms/diamond";
 
 interface LogoProps {
   className?: string;
@@ -10,14 +11,17 @@ export const Logo = ({ className }: LogoProps) => {
     <Link
       href="/"
       className={cn(
-        "relative z-20 flex items-center space-x-2 px-2 py-1 text-sm font-normal",
+        "relative z-20 flex items-center gap-2 px-2 py-1",
         className
       )}
     >
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-        <span className="text-lg font-bold text-primary-foreground">✨</span>
-      </div>
-      <span className="font-medium text-foreground">Sparkle</span>
+      <Diamond size={12} className="text-foreground" />
+      <span
+        className="text-sm font-black tracking-tight text-foreground uppercase"
+        style={{ fontFamily: "var(--font-fraunces)" }}
+      >
+        Irul
+      </span>
     </Link>
   );
 };
