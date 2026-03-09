@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Diamond } from "@/components/atoms/diamond";
-import { SectionSlide } from "@/components/atoms/section-slide";
+import { SectionSlide } from "@/components/molecules/section-slide";
 
 const SKILLS = [
   "React",
