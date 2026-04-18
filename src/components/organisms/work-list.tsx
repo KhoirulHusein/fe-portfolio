@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { projectCards } from "@/config/projects.config";
 import { Diamond } from "@/components/atoms/diamond";
@@ -34,9 +33,7 @@ function ProjectRow({
 
   return (
     <motion.a
-      href={project.ctaLink}
-      target="_blank"
-      rel="noopener noreferrer"
+      href={`/projects/${project.id}`}
       onMouseEnter={() => {
         onEnter(project.src, project.title);
         scramble();
@@ -123,7 +120,7 @@ export function WorkList() {
       <AnimatePresence>
         {cursor.visible && (
           <motion.div
-            key="cursor-image"
+            key={cursor.src}
             className="absolute pointer-events-none z-50 w-64 aspect-video rounded-sm overflow-hidden shadow-2xl"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -135,12 +132,11 @@ export function WorkList() {
               transform: "translate(20px, -50%)",
             }}
           >
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={cursor.src}
               alt={cursor.title}
-              fill
-              className="object-cover object-top"
-              sizes="256px"
+              className="w-full h-full object-cover object-top"
             />
           </motion.div>
         )}

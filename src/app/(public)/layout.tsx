@@ -1,4 +1,5 @@
 import { NavbarWrapper } from "@/components/organisms/navbar-wrapper"
+import { CustomCursor } from "@/components/atoms/cursor";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export default function PublicLayout({
 }) {
   return (
     <>
+      <CustomCursor />
       <NavbarWrapper />
       {children}
     </>

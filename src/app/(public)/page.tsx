@@ -5,12 +5,11 @@ import HeroSection from "@/components/organisms/hero-section";
 import AboutSection from "@/components/organisms/about-section";
 import ProjectsSection from "@/components/organisms/projects-section";
 import ContactSection from "@/components/organisms/contact-section";
-import { PageLoader } from "@/components/atoms/page-loader";
+import { PageLoader } from "@/components/organisms/page-loader";
 import { AudioController } from "@/components/atoms/audio-controller";
-import { CustomCursor } from "@/components/atoms/cursor";
-import { SkillsMarquee } from "@/components/atoms/skills-marquee";
-import { StatsStrip } from "@/components/atoms/stats-strip";
-import { SectionCounter } from "@/components/atoms/section-counter";
+import { SkillsMarquee } from "@/components/molecules/skills-marquee";
+import { StatsStrip } from "@/components/molecules/stats-strip";
+import { SectionCounter } from "@/components/molecules/section-counter";
 import { LenisProvider } from "@/lib/lenis";
 import { useActiveSection } from "@/hooks/use-active-section";
 import { useTheme } from "next-themes";
@@ -69,7 +68,6 @@ export default function Home() {
 
   return (
     <LenisProvider>
-      <CustomCursor />
       <PageLoader onAudioChoice={(withAudio) => setAudioEnabled(withAudio)} />
       <PageContent audioEnabled={audioEnabled} />
     </LenisProvider>

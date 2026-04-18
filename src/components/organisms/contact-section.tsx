@@ -3,8 +3,8 @@
 import { motion } from "motion/react";
 import { Diamond } from "@/components/atoms/diamond";
 import { CharReveal } from "@/components/atoms/char-reveal";
-import { SectionDivider } from "@/components/atoms/section-divider";
-import { SectionSlide } from "@/components/atoms/section-slide";
+import { SectionDivider } from "@/components/molecules/section-divider";
+import { SectionSlide } from "@/components/molecules/section-slide";
 
 type BezierCurve = [number, number, number, number];
 const ease: BezierCurve = [0.215, 0.61, 0.355, 1];

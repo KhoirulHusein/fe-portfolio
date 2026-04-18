@@ -31,19 +31,15 @@ export const timelineData: TimelineEntry[] = [
         <ul className="space-y-3" style={{ fontFamily: "var(--font-instrument-sans)" }}>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Architected Internal Quality Audit Dashboard handling complex workflows and automated reporting,{" "}
-            <span className="text-foreground font-medium">reducing manual workload by 40%+.</span>
+            <span>Architected Internal Quality Audit Dashboard handling complex workflows and automated reporting, <span className="text-foreground font-medium">reducing manual workload by 40%+.</span></span>
           </li>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Worked closely with{" "}
-            <span className="text-foreground font-medium">15+ academic stakeholders</span>{" "}
-            to translate requirements into iterative releases, driving a{" "}
-            <span className="text-foreground font-medium">30% increase in system adoption.</span>
+            <span>Worked closely with <span className="text-foreground font-medium">15+ academic stakeholders</span> to translate requirements into iterative releases, driving a <span className="text-foreground font-medium">30% increase in system adoption.</span></span>
           </li>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Integrated multiple academic data sources to ensure consistent, synchronized audit and reporting workflows.
+            <span>Integrated multiple academic data sources to ensure consistent, synchronized audit and reporting workflows.</span>
           </li>
         </ul>
       </div>
@@ -72,16 +68,15 @@ export const timelineData: TimelineEntry[] = [
         <ul className="space-y-3" style={{ fontFamily: "var(--font-instrument-sans)" }}>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Built <span className="text-foreground font-medium">3 reusable frontend components</span> adopted across multiple projects,{" "}
-            reducing development time by up to 20%.
+            <span>Built <span className="text-foreground font-medium">3 reusable frontend components</span> adopted across multiple projects, reducing development time by up to 20%.</span>
           </li>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Implemented UI slicing for <span className="text-foreground font-medium">5+ application pages</span> using Vite.js and Material UI.
+            <span>Implemented UI slicing for <span className="text-foreground font-medium">5+ application pages</span> using Vite.js and Material UI.</span>
           </li>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Delivered <span className="text-foreground font-medium">5+ new features</span> with cross-functional teams (UI/UX, backend, QA).
+            <span>Delivered <span className="text-foreground font-medium">5+ new features</span> with cross-functional teams (UI/UX, backend, QA).</span>
           </li>
         </ul>
       </div>
@@ -110,16 +105,15 @@ export const timelineData: TimelineEntry[] = [
         <ul className="space-y-3" style={{ fontFamily: "var(--font-instrument-sans)" }}>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Developed and maintained web applications using Next.js, delivering{" "}
-            <span className="text-foreground font-medium">10+ features</span> and resolving 5+ bugs.
+            <span>Developed and maintained web applications using Next.js, delivering <span className="text-foreground font-medium">10+ features</span> and resolving 5+ bugs.</span>
           </li>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Implemented responsive layouts and cross-browser compatibility across 5+ screen sizes.
+            <span>Implemented responsive layouts and cross-browser compatibility across 5+ screen sizes.</span>
           </li>
           <li className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
             <span className="text-foreground mt-0.5 shrink-0 font-mono text-xs">—</span>
-            Contributed to <span className="text-foreground font-medium">2 successfully delivered projects</span> through close team collaboration.
+            <span>Contributed to <span className="text-foreground font-medium">2 successfully delivered projects</span> through close team collaboration.</span>
           </li>
         </ul>
       </div>
