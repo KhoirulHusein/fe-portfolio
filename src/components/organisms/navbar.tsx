@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Navbar as NavbarBase,
   NavBody,
@@ -14,48 +15,41 @@ import { Logo } from "@/components/atoms/logo";
 import { ThemeToggle } from "@/components/atoms/theme-toggle";
 
 const navItems = [
-  {
-    name: "About",
-    link: "#about",
-  },
-  {
-    name: "Project",
-    link: "#project",
-  },
-  {
-    name: "Contact",
-    link: "#contact",
-  },
+  { name: "About",   link: "#about"   },
+  { name: "Project", link: "#project" },
+  { name: "Contact", link: "#contact" },
 ];
 
 export const PortfolioNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
+  const handleToggle = () => setIsOpen(!isOpen);
+  const handleClose  = () => setIsOpen(false);
 
-  const handleClose = () => {
-    setIsOpen(false);
+  const scrollToHash = (hash: string) => {
+    const target = document.querySelector(hash);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (pathname === "/") {
+      scrollToHash(href);
+    } else {
+      router.push(`/${href}`);
     }
   };
 
   const handleMobileNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     handleClose();
-    setTimeout(() => {
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }, 300); // Wait for menu close animation
+    if (pathname === "/") {
+      setTimeout(() => scrollToHash(href), 300);
+    } else {
+      setTimeout(() => router.push(`/${href}`), 300);
+    }
   };
 
   return (

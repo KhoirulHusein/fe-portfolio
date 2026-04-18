@@ -8,22 +8,32 @@ interface PageLoaderProps {
   onAudioChoice?: (withAudio: boolean) => void;
 }
 
+const AUDIO_PREF_KEY = "portfolio-audio-preference";
+
+function getAudioPref(): "with" | "silent" | null {
+  try {
+    const val = localStorage.getItem(AUDIO_PREF_KEY);
+    if (val === "with" || val === "silent") return val;
+    return null;
+  } catch {
+    // localStorage unavailable (private mode, storage blocked, etc.)
+    return null;
+  }
+}
+
+function setAudioPref(pref: "with" | "silent") {
+  try {
+    localStorage.setItem(AUDIO_PREF_KEY, pref);
+  } catch {
+    // Silently ignore — QuotaExceededError or SecurityError
+  }
+}
+
 export function PageLoader({ onAudioChoice }: PageLoaderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isRevealing, setIsRevealing] = useState(false);
   const [showEntryGate, setShowEntryGate] = useState(false);
   const [progress, setProgress] = useState(0);
-
-  const handleEnterWithAudio = () => {
-    AudioManager.fadeIn();
-    onAudioChoice?.(true);
-    triggerReveal();
-  };
-
-  const handleEnterSilently = () => {
-    onAudioChoice?.(false);
-    triggerReveal();
-  };
 
   const triggerReveal = () => {
     window.scrollTo(0, 0);
@@ -34,9 +44,23 @@ export function PageLoader({ onAudioChoice }: PageLoaderProps) {
     }, 1200);
   };
 
+  const handleEnterWithAudio = () => {
+    setAudioPref("with");
+    AudioManager.fadeIn();
+    onAudioChoice?.(true);
+    triggerReveal();
+  };
+
+  const handleEnterSilently = () => {
+    setAudioPref("silent");
+    onAudioChoice?.(false);
+    triggerReveal();
+  };
+
   useEffect(() => {
+    let gateTimer: ReturnType<typeof setTimeout> | null = null;
     document.body.style.overflow = "hidden";
-    
+
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -50,10 +74,40 @@ export function PageLoader({ onAudioChoice }: PageLoaderProps) {
     const handleLoad = () => {
       clearInterval(progressInterval);
       setProgress(100);
-      
-      // Show entry gate after loading complete
-      setTimeout(() => {
-        setShowEntryGate(true);
+
+      gateTimer = setTimeout(() => {
+        const saved = getAudioPref();
+
+        if (saved === "with") {
+          // Saved preference: with audio — attempt autoplay
+          const audio = AudioManager.getInstance();
+          const playPromise = audio?.play();
+
+          if (playPromise) {
+            playPromise
+              .then(() => {
+                // Autoplay succeeded
+                AudioManager.fadeIn();
+                onAudioChoice?.(true);
+                triggerReveal();
+              })
+              .catch(() => {
+                // Autoplay blocked — fall back to silent, reset pref so gate shows next time
+                setAudioPref("silent");
+                onAudioChoice?.(false);
+                triggerReveal();
+              });
+          } else {
+            onAudioChoice?.(false);
+            triggerReveal();
+          }
+        } else if (saved === "silent") {
+          onAudioChoice?.(false);
+          triggerReveal();
+        } else {
+          // No preference yet — show the gate
+          setShowEntryGate(true);
+        }
       }, 500);
     };
 
@@ -61,12 +115,14 @@ export function PageLoader({ onAudioChoice }: PageLoaderProps) {
       handleLoad();
     } else {
       window.addEventListener("load", handleLoad);
-      return () => {
-        window.removeEventListener("load", handleLoad);
-        clearInterval(progressInterval);
-        document.body.style.overflow = "";
-      };
     }
+
+    return () => {
+      window.removeEventListener("load", handleLoad);
+      clearInterval(progressInterval);
+      if (gateTimer) clearTimeout(gateTimer);
+      document.body.style.overflow = "";
+    };
   }, []);
 
   return (

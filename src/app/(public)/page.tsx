@@ -7,7 +7,6 @@ import ProjectsSection from "@/components/organisms/projects-section";
 import ContactSection from "@/components/organisms/contact-section";
 import { PageLoader } from "@/components/organisms/page-loader";
 import { AudioController } from "@/components/atoms/audio-controller";
-import { CustomCursor } from "@/components/atoms/cursor";
 import { SkillsMarquee } from "@/components/molecules/skills-marquee";
 import { StatsStrip } from "@/components/molecules/stats-strip";
 import { SectionCounter } from "@/components/molecules/section-counter";
@@ -69,7 +68,6 @@ export default function Home() {
 
   return (
     <LenisProvider>
-      <CustomCursor />
       <PageLoader onAudioChoice={(withAudio) => setAudioEnabled(withAudio)} />
       <PageContent audioEnabled={audioEnabled} />
     </LenisProvider>
