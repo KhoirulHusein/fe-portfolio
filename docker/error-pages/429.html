@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Too Many Requests</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      background: #0a0a0a;
+      color: #ededed;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 1rem;
+      padding: 2.5rem 2rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1a1a1a;
+      color: #888;
+      border: 1px solid #333;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-size: 1.375rem;
+      font-weight: 700;
+      margin-bottom: 0.625rem;
+    }
+
+    p {
+      font-size: 0.9375rem;
+      color: #888;
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .countdown {
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 1.75rem;
+    }
+
+    .countdown span {
+      font-weight: 700;
+      color: #ededed;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #ededed;
+      color: #0a0a0a;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      padding: 0.625rem 1.5rem;
+      border-radius: 0.75rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">429 · Too Many Requests</div>
+    <h1>Slow down a bit</h1>
+    <p>You've sent too many requests in a short time. Please wait before trying again.</p>
+    <div class="countdown">
+      Try again in <span id="timer">30</span> seconds
+    </div>
+    <button class="btn" id="retryBtn" disabled onclick="window.history.back()">Go Back</button>
+  </div>
+
+  <script>
+    var seconds = 30
+    var timer = document.getElementById('timer')
+    var btn = document.getElementById('retryBtn')
+    var interval = setInterval(function () {
+      seconds--
+      timer.textContent = seconds
+      if (seconds <= 0) {
+        clearInterval(interval)
+        btn.disabled = false
+        document.querySelector('.countdown').textContent = 'You can try again now.'
+      }
+    }, 1000)
+  </script>
+</body>
+</html>
