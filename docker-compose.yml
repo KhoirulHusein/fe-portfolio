@@ -27,7 +27,7 @@ services:
     image: nginx:1.27-alpine
     container_name: ${APP_NAME:-portfolio}_nginx
     ports:
-      - "443:443"
+      - "127.0.0.1:9443:443"
     environment:
       - DOMAIN=${DOMAIN}
     volumes:

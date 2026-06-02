@@ -67,6 +67,7 @@ jobs:
             "GHCR_TOKEN='$GHCR_TOKEN' bash -s" <<'EOF'
           echo "$GHCR_TOKEN" | docker login ghcr.io -u khoirulhusein --password-stdin
           cd /var/www/portfolio/frontend
+          git pull origin main
           docker compose pull portfolio
           docker compose up -d --no-build
           docker image prune -f
