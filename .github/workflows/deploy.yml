@@ -1,31 +1,47 @@
-name: Deploy to VPS
+name: Build & Deploy
 
 on:
   push:
     branches: [main]
 
+env:
+  IMAGE_NAME: ghcr.io/khoirulhusein/fe-portfolio
+
 jobs:
-  build-check:
-    name: Build Check
+  build-and-push:
+    name: Build & Push Image
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
-          version: 9
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/setup-node@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
         with:
-          node-version: 20
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
-    name: Deploy
-    needs: build-check
+    name: Deploy to VPS
+    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: Connect to Tailscale
@@ -37,13 +53,17 @@ jobs:
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           host: ${{ secrets.VPS_TAILSCALE_IP }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
+          envs: GHCR_TOKEN
           script: |
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u khoirulhusein --password-stdin
             cd /var/www/portfolio/frontend
-            git pull origin main
-            docker compose up -d --build --no-deps portfolio
+            docker compose pull portfolio
+            docker compose up -d --no-build
             docker image prune -f
