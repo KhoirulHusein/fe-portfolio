@@ -1,12 +1,12 @@
 # Drop koneksi langsung via IP (bukan dari domain)
 server {
-  listen 443 ssl default_server;
+  listen 443 ssl default_server proxy_protocol;
   server_name "";
   ssl_reject_handshake on;
 }
 
 server {
-  listen 443 ssl;
+  listen 443 ssl proxy_protocol;
   server_name ${DOMAIN} www.${DOMAIN};
 
   ssl_certificate     /etc/ssl/portfolio/fullchain.pem;
