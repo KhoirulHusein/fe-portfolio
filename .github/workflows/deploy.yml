@@ -57,11 +57,12 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_TAILSCALE_IP }}
           VPS_USER: ${{ secrets.VPS_USER }}
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_PORT: ${{ secrets.VPS_SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+          ssh -i ~/.ssh/deploy_key -p "$VPS_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             "$VPS_USER@$VPS_HOST" \
             "GHCR_TOKEN='$GHCR_TOKEN' bash -s" <<'EOF'
           echo "$GHCR_TOKEN" | docker login ghcr.io -u khoirulhusein --password-stdin
