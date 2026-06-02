@@ -52,18 +52,21 @@ jobs:
           tags: tag:ci
 
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
         env:
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-        with:
-          host: ${{ secrets.VPS_TAILSCALE_IP }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: 22
-          envs: GHCR_TOKEN
-          script: |
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u khoirulhusein --password-stdin
-            cd /var/www/portfolio/frontend
-            docker compose pull portfolio
-            docker compose up -d --no-build
-            docker image prune -f
+          VPS_HOST: ${{ secrets.VPS_TAILSCALE_IP }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "$VPS_USER@$VPS_HOST" \
+            "GHCR_TOKEN='$GHCR_TOKEN' bash -s" <<'EOF'
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u khoirulhusein --password-stdin
+          cd /var/www/portfolio/frontend
+          docker compose pull portfolio
+          docker compose up -d --no-build
+          docker image prune -f
+          EOF
