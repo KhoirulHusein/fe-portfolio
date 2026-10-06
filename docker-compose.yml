@@ -1,21 +1,18 @@
 services:
   portfolio:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    image: ${APP_IMAGE:-portfolio}:latest
+    image: ${APP_IMAGE:-ghcr.io/khoirulhusein/fe-portfolio}:latest
+    # Caddyfile: reverse_proxy portfolio_app:3000
     container_name: ${APP_NAME:-portfolio}_app
-    expose:
-      - "${PORT:-3000}"
     environment:
       - NODE_ENV=production
       - PORT=${PORT:-3000}
       - HOSTNAME=0.0.0.0
+      - API_BASE_URL=${API_BASE_URL:?API_BASE_URL belum di-set di .env}
     restart: unless-stopped
     mem_limit: 512m
     cpus: "0.5"
     networks:
-      - internal
+      - edge
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:${PORT:-3000}"]
       interval: 30s
@@ -23,27 +20,8 @@ services:
       start_period: 30s
       retries: 3
 
-  nginx:
-    image: nginx:1.27-alpine
-    container_name: ${APP_NAME:-portfolio}_nginx
-    ports:
-      - "127.0.0.1:9443:443"
-    environment:
-      - DOMAIN=${DOMAIN}
-    volumes:
-      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./docker/default.conf.template:/etc/nginx/templates/default.conf.template:ro
-      - ./docker/error-pages:/etc/nginx/error-pages:ro
-      - /etc/ssl/portfolio:/etc/ssl/portfolio:ro
-    restart: unless-stopped
-    networks:
-      - internal
-      - public
-    depends_on:
-      portfolio:
-        condition: service_healthy
-
+# Dibuat oleh stack Caddy di /var/www/edge
 networks:
-  internal:
-    internal: true
-  public:
+  edge:
+    external: true
+    name: edge
