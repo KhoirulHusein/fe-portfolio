@@ -4,8 +4,13 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
 env:
   IMAGE_NAME: ghcr.io/khoirulhusein/fe-portfolio
+  APP_URL: https://stackdeck.work
 
 jobs:
   build-and-push:
@@ -33,6 +38,8 @@ jobs:
           context: .
           file: docker/Dockerfile
           push: true
+          build-args: |
+            NEXT_PUBLIC_APP_URL=${{ env.APP_URL }}
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
@@ -69,6 +76,6 @@ jobs:
           cd /var/www/portfolio/frontend
           git pull origin main
           docker compose pull portfolio
-          docker compose up -d --no-build
+          docker compose up -d --no-build --remove-orphans
           docker image prune -f
           EOF
