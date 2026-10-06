@@ -72,6 +72,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key -p "$VPS_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             "$VPS_USER@$VPS_HOST" \
             "GHCR_TOKEN='$GHCR_TOKEN' bash -s" <<'EOF'
+          set -euo pipefail
           echo "$GHCR_TOKEN" | docker login ghcr.io -u khoirulhusein --password-stdin
           cd /var/www/portfolio/frontend
           git pull origin main
